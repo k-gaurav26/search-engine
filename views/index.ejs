@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlGoogle</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&family=Open+Sans:wght@700&display=swap" rel="stylesheet">
+<link rel="icon" href="./favicon.ico">
+</head>
+<body>
+    <h1>AlGoogle</h1>
+    <form class="form">
+        <input class="search-box" type="text" name="question" id="question" placeholder="Search AlGoogle for...">
+        <input class="submit" type="submit" value="Go!">
+    </form>
+    <div class="error hide">
+        <!-- <div class="tenor-gif-embed centre" data-postid="16558003" data-share-method="host" data-aspect-ratio="1.77778" data-width="60%"><a href="https://tenor.com/view/we-dont-do-that-here-black-panther-tchalla-bruce-gif-16558003">We Dont Do That Here Black Panther GIF</a>from <a href="https://tenor.com/search/we+dont+do+that+here-gifs">We Dont Do That Here GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script> -->
+        <h2 class="error_text"></h2>
+    </div>
+    <div class="loading"></div>
+    
+    <div class="main">
+        <div class="searchedFor"></div>
+        <div class="question reveal">
+            <div class="title">
+    
+            </div>
+            <div class="body">
+    
+            </div>
+            <div class="url">
+                <a href="" target="_blank" rel="noopener noreferrer"></a>
+            </div>
+        </div>
+        <div class="question reveal">
+            <div class="title">
+    
+            </div>
+            <div class="body">
+    
+            </div>
+            <div class="url">
+                <a href="" target="_blank" rel="noopener noreferrer"></a>
+            </div>
+        </div>
+        <div class="question reveal">
+            <div class="title">
+    
+            </div>
+            <div class="body">
+    
+            </div>
+            <div class="url">
+                <a href="" target="_blank" rel="noopener noreferrer"></a>
+            </div>
+        </div>
+        <div class="question reveal">
+            <div class="title">
+    
+            </div>
+            <div class="body">
+    
+            </div>
+            <div class="url">
+                <a href="" target="_blank" rel="noopener noreferrer"></a>
+            </div>
+        </div>
+        <div class="question reveal" id="last-question">
+            <div class="title">
+    
+            </div>
+            <div class="body">
+    
+            </div>
+            <div class="url" target="_blank" rel="noopener noreferrer">
+                <a href=""></a>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-container">
+        <a class="footer-link" href="https://www.linkedin.com/in/kumar-gaurav-69320a202/">LinkedIn</a>
+        <a class="footer-link" href="https://www.instagram.com/k_gaurav26/">Instagram</a>
+        <a class="footer-link" href="https://twitter.com/gaurav42430?t=8dTMqeSKeAlFU-X0Jb3Itw&s=08">Twitter</a>
+        <p class="copyright">© Kumar Gaurav.</p>
+      </div>
+</body>
+</html>
+<script>
+    const form = document.querySelector("form");
+    const question_element = form.question;
+    
+    const questions = document.querySelectorAll(".question");
+    const urls = document.querySelectorAll(".url a");
+    const titles = document.querySelectorAll(".title");
+    const body = document.querySelectorAll(".body");
+    const loadingDiv = document.querySelector(".loading");
+    const show = document.querySelector(".searchedFor");
+    const error_page = document.querySelector(".error");
+    const error_page_text = document.querySelector(".error .error_text");
+    // const gif = document.querySelector(".error div");
+    //the following for loop is to clear the previous search result
+    //as soon as a new query is submitted and before the new search result is obtained
+    
+    form.addEventListener("submit", async (e)=>{
+        e.preventDefault();
+        const question = question_element.value;
+        // console.log(question);
+
+        // const observer = new IntersectionObserver(entries => {
+        //     entries.forEach(entry => {
+        //         const questions = entry.target.querySelectorAll('.question');
+        //         for (let i = 0; i < 5; i++){
+        //             if (entry.isIntersecting) {
+        //             questions[i].classList.add('active');
+        //             return; // if we added the class, exit the function
+        //             }
+
+        //             // We're not intersecting, so remove the class!
+        //             questions[i].classList.remove('active');
+        //         }
+        //     });
+        // });
+
+        // observer.observe(document.querySelector('.main'));
+        
+        for (let i = 0; i < 5; i++) {
+            questions[i].classList.remove("active");
+                titles[i].innerHTML = "";
+                body[i].innerHTML = "";
+                urls[i].innerHTML = "";
+                urls[i]['href'] = "";
+        }
+        loadingDiv.innerHTML = "Loading...";
+        show.innerHTML = "";
+        try {
+            const result = await fetch(`/search?question=${question}`, {method: "GET"});
+            const data = await result.json();
+            // const data = await result.json();
+            loadingDiv.innerHTML = "";
+            if(typeof data[0].title !== 'undefined') {
+                error_page.classList.add("hide");
+                error_page_text.innerHTML = "";
+                show.innerHTML = `<h2>SHOWING SEARCH RESULTS FOR "${data[5]}"</h2>`;
+                for (let i = 0; i < 5; i++) {
+                    questions[i].classList.add("active");
+                    body[i].innerHTML = `<h4>${data[i].text}</h4>`;
+                    titles[i].innerHTML = `<h3>${data[i].title}</h3>`;
+                    urls[i].innerHTML = `<h6>Go to problem source</h6>`;
+                    urls[i]['href'] = `${data[i].url}`;
+                }
+                
+            }
+            else {
+                error_page.classList.remove("hide");
+                error_page_text.innerHTML = `We racked our brains (read servers!), but seems like there aren't any great matches for <em>"${data[5]}"</em>!<br>Could you rephrase your query?!`;
+            }
+            
+        } catch (error) {
+            // console.log(error);
+            alert(error);
+        }
+        
+    })
+</script>
